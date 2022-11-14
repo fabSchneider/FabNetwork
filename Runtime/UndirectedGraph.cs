@@ -162,6 +162,21 @@ namespace Fab.Network
         }
 
         /// <summary>
+        /// Disconnects two nodes, removing the edge between them.
+        /// </summary>
+        /// <param name="edge"></param>
+        public bool DisconnectNodes(Edge edge)
+        {
+            if (edges.Remove(edge))
+            {
+                edgesByNodes[edge.A].Remove(edge);
+                edgesByNodes[edge.B].Remove(edge);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Returns all edges connecting this node.
         /// </summary>
         /// <param name="node"></param>
@@ -172,11 +187,11 @@ namespace Fab.Network
         }
 
         /// <summary>
-        /// Returns all nodes connected to this node.
+        /// Returns all nodes neighbored to this node.
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public IEnumerable<Node> GetConnectedNodes(Node node)
+        public IEnumerable<Node> GetNeighbourNodes(Node node)
         {
             return GetNodeEdges(node).Select(e => e.A == node ? e.B : e.A);
         }
@@ -191,6 +206,51 @@ namespace Fab.Network
             edgesByNodes.Clear();
         }
 
+        public IEnumerable DFS(Node root)
+        {
+            List<Node> visited = new List<Node>();
+
+            visited.Add(root);
+            foreach (Node neighbour in GetNeighbourNodes(root))
+            {
+                yield return DFSStep(visited, neighbour);
+            }
+        }
+
+        private IEnumerable DFSStep(List<Node> visited, Node current)
+        {
+            foreach (Node neighbour in GetNeighbourNodes(current))
+            {
+                if (!visited.Contains(neighbour))
+                {
+                    visited.Add(neighbour);
+                    yield return DFSStep(visited, neighbour);
+                }
+            }
+        }
+
+        public IEnumerable<Node> DepthFirstSearch(Node root)
+        {
+            var stack = new Stack<Node>();
+            var visited = new HashSet<Node>();
+            stack.Push(root);
+            while (stack.Count > 0)
+            {
+                Node current = stack.Pop();
+                if (visited.Add(current))
+                {
+                    yield return current;
+                    foreach (Node neighbour in GetNeighbourNodes(current))
+                    {
+                        if (!visited.Contains(neighbour))
+                        {
+                            stack.Push(neighbour);
+                        }
+                    }
+                }
+            }
+        }
+
         private void CheckCanConnect(Node a, Node b)
         {
             if (a.Owner != b.Owner)
@@ -203,5 +263,6 @@ namespace Fab.Network
                     throw new InvalidOperationException("Nodes are already connected");
             }
         }
+
     }
 }

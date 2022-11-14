@@ -24,10 +24,20 @@ namespace Fab.Network
 
         private Dictionary<GameObject, Node<GameObject>> nodeByGOs;
 
+        public enum ChangeEventType
+        {
+            Added, 
+            Removed,
+            Connected,
+            Disconnected,
+            Updated,
+            Cleared
+        }
+
         /// <summary>
         /// Called every time the network was changed
         /// </summary>
-        public event Action changed;
+        public event Action<ChangeEventType> changed;
 
         private void Awake()
         {
@@ -49,7 +59,7 @@ namespace Fab.Network
 
             nodeByGOs.Add(nodeGO, node);
 
-            changed?.Invoke();
+            changed?.Invoke(ChangeEventType.Added);
             return node;
         }
 
@@ -72,7 +82,7 @@ namespace Fab.Network
                 foreach (Edge e in edges)
                     Destroy(((Edge<LineRenderer>)e).Data.gameObject);
 
-                changed?.Invoke();
+                changed?.Invoke(ChangeEventType.Removed);
                 return true;
             }
             return false;
@@ -93,7 +103,7 @@ namespace Fab.Network
                 Destroy(((Edge<LineRenderer>)e).Data.gameObject);
      
             network.Clear();
-            changed?.Invoke();
+            changed?.Invoke(ChangeEventType.Cleared);
         }
 
         /// <summary>
@@ -125,8 +135,24 @@ namespace Fab.Network
             });
 
             edge.Data = edgeInst;
-            changed?.Invoke();
+            changed?.Invoke(ChangeEventType.Connected);
             return edge;
+        }
+
+        /// <summary>
+        /// Disconnects two nodes connected by an edge.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <returns></returns>
+        public bool DisconnectNodes(Edge edge)
+        {
+            if (network.DisconnectNodes(edge))
+            {
+                changed?.Invoke(ChangeEventType.Disconnected);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -145,7 +171,7 @@ namespace Fab.Network
                 else
                     ((Edge<LineRenderer>)e).Data.SetPosition(1, position);
             }
-            changed?.Invoke();
+            changed?.Invoke(ChangeEventType.Updated);
         }
 
         /// <summary>

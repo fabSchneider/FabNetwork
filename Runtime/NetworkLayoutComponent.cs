@@ -124,7 +124,7 @@ namespace Fab.Network
                 networkComponent.changed -= OnNetworkChanged;
         }
 
-        private void OnNetworkChanged()
+        private void OnNetworkChanged(NetworkComponent.ChangeEventType changeEvent)
         {
             changedFlag = true;
         }
