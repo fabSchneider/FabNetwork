@@ -1,6 +1,6 @@
 {
   "name": "com.fab.network",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "Fab Network",
   "description": "A force directed network implementation with runtime authoring support.",
   "unity": "2021.3",

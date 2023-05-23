@@ -46,9 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc0ae511c5df9944eb73981bbef34761, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodePrefab: {fileID: 1025029688244017641, guid: 5ddfd4db756d9fa418350dda39c9f0cc,
+  nodePrefab: {fileID: 1025029688244017641, guid: 59ff55b77e7335e43a6f559833cc789c,
     type: 3}
-  edgePrefab: {fileID: 7447282747114316456, guid: 13db1971d036d374ea3ed5162579311a,
+  edgePrefab: {fileID: 7447282747114316456, guid: afdf49d9f02994e48a2b62aeaa4f3b17,
     type: 3}
 --- !u!114 &861427917023173254
 MonoBehaviour:
